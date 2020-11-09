@@ -1,6 +1,6 @@
 # idsort
-	a utility to sort and joint info from different files
-	inspired by IBS DFSORT utility
+	a utility to sort and join info from different files
+	inspired by IBM DFSORT utility
 
 ## operation modes
 
