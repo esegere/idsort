@@ -5,6 +5,7 @@
 ## operation modes
 
 -S, --sort 
+
 	sort
 
 -J, --Join
@@ -18,9 +19,11 @@
 ## flags
 
 -f, --field=field[/field]...
+
 	defauts to the whole line
 
 -c, --condition=condition[&&condition]...
+
 	            condition[||condition]... 
 	
 
