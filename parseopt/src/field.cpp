@@ -128,7 +128,7 @@ namespace field{
   }
 
 
-  Register extract(std::string_view text_line){
+  Register FieldExtractor::extract(std::string_view text_line){
     return Register{};
   }
 
@@ -155,31 +155,6 @@ namespace field{
     this->columns.push_back(new_field);
   }
 
-  std::string generate_parse_error(std::string_view string_to_parse, int field_index, const Field& invalid_field){
-    std::string message = std::string(string_to_parse);
-    std::string indication_line;
-    int specifier_index = invalid_field.failIndex();
-    int curr_specifier_index = 1;
-    int curr_field_index = 1;
-    for(auto character : string_to_parse){
-      if(character == FIELD_DELIMITER){
-        curr_field_index ++;
-        curr_specifier_index = 1;
-      } else if (character == SPECIFIER_DELIMITER){
-        curr_specifier_index ++;
-      }
-      if(curr_specifier_index == specifier_index && curr_field_index == field_index){
-        indication_line += " ^ ";
-        indication_line += invalid_field.getNonValidReason();
-        break;
-      } else {
-        indication_line += ' ';
-      }
-    }
-    message += '\n';
-    message.append(std::move(indication_line));
-    return message;
-  }
 
   std::variant<FieldExtractor, std::string> parse_fields(std::string_view string_to_parse){
     bool all_correct = true;
@@ -193,7 +168,7 @@ namespace field{
         grouped_fields.addField(curr_field);
       } else {
         all_correct = false;
-        parse_error = generate_parse_error(string_to_parse, i+1, curr_field);
+        parse_error = opterr::generate_parse_error(string_to_parse, FIELD_DELIMITER, SPECIFIER_DELIMITER, i+1, curr_field);
         break;
       }
     }

@@ -4,17 +4,17 @@
 namespace sortm{
   
   int execute(const argh::parser& cli){
-    std::cout << "sort mode\n" ;
     auto extractor_or_error = field::parse_fields(
         cli(
           {"-f", "--field"},
           ""
           ).str()
         );
-    if(extractor_or_error.index() == 0){
+    if(extractor_or_error.index() == 0){// fieldExtractor
+      std::get<0>(extractor_or_error).checkFieldsInfo();
       return 0 ;
-    } else {
-      std::cout << std::get<1>(extractor_or_error) << "\n";
+    } else { //error
+      std::cerr << std::get<1>(extractor_or_error) << "\n";
       return 1 ; 
     }
   }

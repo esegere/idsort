@@ -1,6 +1,8 @@
 #include <string>
 #include <vector>
 #include <variant>
+#include <iostream>
+#include "parseopt/opterr.hpp"
 
 #ifndef FIELD_H
 #define FIELD_H
@@ -9,8 +11,8 @@ namespace field {
 
   using FieldType = std::variant<float, std::string>;
 
-  class Field{
-      private:
+  class Field: public opterr::Parseable{
+    private:
         int start;
         int end;
         bool ascending_order;
@@ -22,9 +24,9 @@ namespace field {
         Field(unsigned int start, unsigned int end, bool ascending_order, unsigned int type);
         Field(int invalid_specifier_index, std::string_view reason);
       public:
-        bool isValid() const {return this->valid;}
-        std::string_view getNonValidReason() const {return this->invalid_reason;}
-        int failIndex() const{return this->invalid_specifier_index;}
+        bool isValid() const override {return this->valid;}
+        std::string_view getNonValidReason() const override {return this->invalid_reason;}
+        int failIndex() const override {return this->invalid_specifier_index;}
         int getStart() const {return this->start;}
         int getEnd() const {return this->end;}
         bool isAscending() const {return this->ascending_order;}
@@ -51,6 +53,11 @@ namespace field {
     public:
       friend std::variant<FieldExtractor, std::string> parse_fields(std::string_view string_to_parse);
       Register extract(std::string_view text_line);
+      void checkFieldsInfo(){
+        for(auto elem : this->columns){
+          std::cout << " " << elem.getStart() << " " << elem.getEnd() << " " << elem.getTypeIndex() << " " << elem.isAscending() << "\n";
+        }
+      }
   };
 
   std::variant<FieldExtractor, std::string> parse_fields(std::string_view string_to_parse);
