@@ -48,7 +48,7 @@ namespace field{
   Field make_field(std::string_view field_string){
     auto specifiers = split(field_string, SPECIFIER_DELIMITER);
     if(specifiers.size() > 4){
-      return Field(1, "too many arguments"); 
+      return Field(5, "too many arguments"); 
     }
     while(specifiers.size() < 4){
       specifiers.push_back("");
