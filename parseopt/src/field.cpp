@@ -1,15 +1,13 @@
 #include "parseopt/field.hpp"
+#include "parseopt/parseutil.hpp"
 #include <sstream>
-#include <string>
-#include <algorithm>
 
 namespace field{
 
   constexpr char FIELD_DELIMITER = '/';
   constexpr char SPECIFIER_DELIMITER = ':';
 
-  std::vector<std::string> split(std::string_view, char);
-  
+
   Field::Field(unsigned int start, unsigned int end, bool ascending_order, unsigned int type){
     this->start = start;
     this->end = end;
@@ -31,22 +29,9 @@ namespace field{
     this->invalid_specifier_index = invalid_specifier_index;
   }
 
-  bool is_valid_number(std::string_view field_num){
-    auto check_digit = [](char character, bool include_sign)->bool{
-      return std::isdigit(character) || ( include_sign && (character == '-' || character == '+') );
-    };
-    auto begin = field_num.begin();
-    bool first_is_valid = check_digit(*begin, true);
-    begin++ ;
-    return first_is_valid && std::all_of(
-        begin,
-        field_num.end(),
-        [&check_digit](char character)->bool{return check_digit(character, false);}
-        );
-  }
 
   Field make_field(std::string_view field_string){
-    auto specifiers = split(field_string, SPECIFIER_DELIMITER);
+    auto specifiers = parseutil::split(field_string, SPECIFIER_DELIMITER);
     if(specifiers.size() > 4){
       return Field(5, "too many arguments"); 
     }
@@ -71,10 +56,10 @@ namespace field{
       order += 'A';
     }
     //defaults end
-    if(!is_valid_number(start)){
+    if(!parseutil::is_valid_number(start)){
       return Field(1, "invalid start position");
     }
-    if(!is_valid_number(end)){
+    if(!parseutil::is_valid_number(end)){
       return Field(2, "invalid length");
     }
     if( field_type != "N" && field_type != "S" ){
@@ -133,24 +118,6 @@ namespace field{
   }
 
 
-  std::vector<std::string> split(std::string_view complete_string, char division){
-    std::vector<std::string> splitted_strings;
-    std::string temp_str = "";
-    for(auto character : complete_string){
-      if (character == division){
-        splitted_strings.push_back(temp_str);
-        temp_str.clear();
-      } else {
-        temp_str += character ; 
-      }
-    }
-    if (!temp_str.empty()){
-      splitted_strings.push_back(temp_str);
-    }
-    return splitted_strings ;
-  }
-
-
   void FieldExtractor::addField(const Field& new_field){
     this->columns.push_back(new_field);
   }
@@ -158,7 +125,7 @@ namespace field{
 
   std::variant<FieldExtractor, std::string> parse_fields(std::string_view string_to_parse){
     bool all_correct = true;
-    auto splitted = split(string_to_parse, FIELD_DELIMITER);
+    auto splitted = parseutil::split(string_to_parse, FIELD_DELIMITER);
     int num_of_fields = splitted.size();
     FieldExtractor grouped_fields;
     std::string parse_error;
