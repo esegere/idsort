@@ -6,9 +6,9 @@
 
 namespace parseutil {
 
-  std::vector<std::string> split(std::string_view string_to_split, char delimitter);
+  std::vector<std::string> split(std::string_view, char);
 
-  bool is_valid_number(std::string_view field_num);
+  bool is_valid_number(std::string_view);
 
 }
 #endif

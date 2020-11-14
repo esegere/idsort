@@ -1,6 +1,7 @@
+#include <sstream>
+
 #include "parseopt/field.hpp"
 #include "parseopt/parseutil.hpp"
-#include <sstream>
 
 namespace field{
 
@@ -77,14 +78,23 @@ namespace field{
     return Field(start_n, end_n, ascending_order, type_n);
   }
 
+  
+  void Register::addPair(std::pair<FieldType, bool> new_pair){
+    this->columns.push_back(new_pair);
+  }
+
 
   int Register::size() const{
-    return columns.size();
+    return this->columns.size();
   }  
 
 
   FieldType Register::at(int index) const{
-    return columns.at(index);
+    return this->columns.at(index).first;
+  }
+
+  bool Register::orderAt(int index) const{
+    return this->columns.at(index).second;
   }
 
 
@@ -92,10 +102,10 @@ namespace field{
   bool compare(FieldType variant1, FieldType variant2){
     constexpr int VARIANT_INDEX = NUM_OF_TYPES - 1 ;
     bool result = false ;
-    try{
-      std::get<VARIANT_INDEX>(variant1) <  std::get<VARIANT_INDEX>(variant2) ;
-    } catch (const std::bad_variant_access& e){
-      if constexpr (VARIANT_INDEX > 0) {
+    if (variant1.index() == VARIANT_INDEX){
+      result = std::get<VARIANT_INDEX>(variant1) <  std::get<VARIANT_INDEX>(variant2) ;
+    } else {
+      if constexpr (VARIANT_INDEX > 0){
         result = compare<VARIANT_INDEX>(variant1, variant2);
       }
     }
@@ -107,14 +117,48 @@ namespace field{
     bool is_lower = false;
     int reg_size = this->size();
     for (int i=0; i<reg_size; i++){
-      is_lower |= compare<std::variant_size_v<FieldType>>(this->at(i),reg2.at(i));
+      bool compare_result = compare<std::variant_size_v<FieldType>>(this->at(i), reg2.at(i));
+      is_lower |= this->orderAt(i) ? compare_result : !compare_result;
     }
     return is_lower;
   }
 
 
-  Register FieldExtractor::extract(std::string_view text_line){
-    return Register{};
+  Register FieldExtractor::extract(std::string_view text_line) const{
+    Register line_register(this->current_line++);
+    // positive index lambda
+    auto to_positive_index = [size=text_line.size()](int original_index)->unsigned int{
+      int position = original_index<0 ? size + original_index + 1 : original_index;
+      if(position > size){
+        position = size;
+      }else if(position < 0){
+        position = 0;
+      }
+      return position;
+    };
+    //
+    float number;
+    std::string word;
+    for(auto field : this->columns){
+      word = text_line.substr(
+          to_positive_index(field.getStart()),
+          to_positive_index(field.getEnd())
+          );
+      switch(field.getTypeIndex()){
+        case 0://float
+          std::istringstream(word) >> number;
+          line_register.addPair(
+              std::make_pair(number, field.isAscending())
+              );
+          break;
+        case 1://string
+          line_register.addPair(
+              std::make_pair(word, field.isAscending())
+              );
+          break;
+      }
+    }
+    return line_register;
   }
 
 

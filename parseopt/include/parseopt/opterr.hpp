@@ -12,6 +12,6 @@ namespace opterr{
       virtual int failIndex() const = 0; 
   };
 
-  std::string generate_parse_error(std::string_view string_to_parse, char field_delimiter, char specifier_delimiter, int field_index, const Parseable& invalid_field);
+  std::string generate_parse_error(std::string_view, char, char, int, const Parseable&);
 }
 #endif

@@ -1,5 +1,6 @@
-#include "parseopt/parseutil.hpp"
 #include <algorithm>
+
+#include "parseopt/parseutil.hpp"
 
 namespace parseutil {
 

@@ -1,6 +1,11 @@
 #include "argh/argh.hpp"
-#include "parseopt/field.hpp"
+
+#ifndef SORTM_H
+#define SORTM_H
 
 namespace sortm {
-  int execute(const argh::parser& cli);
+
+  int execute(const argh::parser&);
+
 }
+#endif

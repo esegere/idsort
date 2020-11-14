@@ -1,7 +1,9 @@
 #include <string>
 #include <vector>
 #include <variant>
-#include <iostream>
+#include <sstream>
+#include <utility>
+
 #include "parseopt/opterr.hpp"
 
 #ifndef FIELD_H
@@ -21,8 +23,8 @@ namespace field {
         int invalid_specifier_index;
         std::string_view invalid_reason;
 
-        Field(unsigned int start, unsigned int end, bool ascending_order, unsigned int type);
-        Field(int invalid_specifier_index, std::string_view reason);
+        Field(unsigned int, unsigned int, bool, unsigned int);
+        Field(int, std::string_view);
       public:
         bool isValid() const override {return this->valid;}
         std::string_view getNonValidReason() const override {return this->invalid_reason;}
@@ -31,36 +33,36 @@ namespace field {
         int getEnd() const {return this->end;}
         bool isAscending() const {return this->ascending_order;}
         unsigned int getTypeIndex() const {return this->type;}
-        friend Field make_field(std::string_view field_string);
+        friend Field make_field(std::string_view);
   };
 
   Field make_field(std::string_view field_string);
 
   class Register{
     private:
-      std::vector<FieldType> columns;
-      int line_number;
+      std::vector<std::pair<FieldType, bool>> columns;
+      unsigned int line_number;
     public:
+      Register(unsigned int number): line_number(number){}
+      int getLineNumber() const{return line_number;}
+      void addPair(std::pair<FieldType, bool>);
       int size() const;
       FieldType at(int index) const;
-      bool operator<(const Register& reg2) const;
+      bool orderAt(int index) const;
+      bool operator<(const Register&) const;
   };
 
   class FieldExtractor {
     private:
       std::vector<Field> columns;
-      void addField(const Field& new_field);
+      mutable unsigned int current_line = 0;
+      void addField(const Field&);
     public:
-      friend std::variant<FieldExtractor, std::string> parse_fields(std::string_view string_to_parse);
-      Register extract(std::string_view text_line);
-      void checkFieldsInfo(){
-        for(auto elem : this->columns){
-          std::cout << " " << elem.getStart() << " " << elem.getEnd() << " " << elem.getTypeIndex() << " " << elem.isAscending() << "\n";
-        }
-      }
+      friend std::variant<FieldExtractor, std::string> parse_fields(std::string_view);
+      Register extract(std::string_view) const;
   };
 
-  std::variant<FieldExtractor, std::string> parse_fields(std::string_view string_to_parse);
+  std::variant<FieldExtractor, std::string> parse_fields(std::string_view);
 }
 
 #endif
