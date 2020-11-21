@@ -1,6 +1,7 @@
 #include <string>
 #include <variant>
 #include <vector>
+#include <functional>
 
 #include "parseopt/field.hpp"
 
@@ -9,7 +10,11 @@
 
 namespace sortinfo{
 
-  std::variant<std::vector<field::Register>, std::string>proces(const std::string&, const field::FieldExtractor&);
+  using ret_func = std::function<
+    std::variant<std::vector<field::Register>, std::string>(const field::FieldExtractor&)
+  >;
+
+  ret_func proces(const std::string&);  
 
 }
 #endif

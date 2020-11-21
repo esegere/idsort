@@ -3,6 +3,7 @@
 #include <variant>
 #include <sstream>
 #include <utility>
+#include <functional>
 
 #include "parseopt/opterr.hpp"
 
@@ -51,18 +52,17 @@ namespace field {
       bool orderAt(int index) const;
       bool operator<(const Register&) const;
   };
-
   class FieldExtractor {
     private:
       std::vector<Field> columns;
       mutable unsigned int current_line = 0;
       void addField(const Field&);
     public:
-      friend std::variant<FieldExtractor, std::string> parse_fields(std::string_view);
+      friend std::variant<FieldExtractor, std::string> parse_fields_impl(std::string_view);
       Register extract(std::string_view) const;
   };
 
-  std::variant<FieldExtractor, std::string> parse_fields(std::string_view);
+   std::function<std::variant<FieldExtractor, std::string>()> parse_fields(std::string_view);
 }
 
 #endif

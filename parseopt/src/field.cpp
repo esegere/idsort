@@ -167,7 +167,7 @@ namespace field{
   }
 
 
-  std::variant<FieldExtractor, std::string> parse_fields(std::string_view string_to_parse){
+  std::variant<FieldExtractor, std::string> parse_fields_impl(std::string_view string_to_parse){
     bool all_correct = true;
     auto splitted = parseutil::split(string_to_parse, FIELD_DELIMITER);
     int num_of_fields = splitted.size();
@@ -188,6 +188,12 @@ namespace field{
     } else {
       return parse_error;
     }
+  }
+
+  std::function<std::variant<FieldExtractor, std::string>()> parse_fields(std::string_view string_to_parse){
+    return [string_to_parse]() -> std::variant<FieldExtractor, std::string> {
+      return parse_fields_impl(string_to_parse);
+    };
   }
 
 }
