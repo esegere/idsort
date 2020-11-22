@@ -11,7 +11,7 @@
 namespace sortinfo{
 
   using ret_func = std::function<
-    std::variant<std::vector<field::Register>, std::string>(const field::FieldExtractor&)
+    std::variant<std::vector<field::Register>, std::string>(field::FieldExtractor)
   >;
 
   ret_func proces(const std::string&);  

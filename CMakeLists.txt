@@ -24,6 +24,12 @@ target_link_libraries(
 	analyzer
 )
 
+target_include_directories(
+	modes
+	PRIVATE
+	flow
+)
+
 target_link_libraries(
 	idsort
 	modes
