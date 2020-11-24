@@ -10,6 +10,7 @@ namespace opterr{
       virtual bool isValid() const = 0;
       virtual std::string_view getNonValidReason() const = 0;
       virtual int failIndex() const = 0; 
+      virtual ~Parseable() = default;
   };
 
   std::string generate_parse_error(std::string_view, char, char, int, const Parseable&);
