@@ -1,4 +1,6 @@
 # idsort
+[![CMake Actions Status](https://github.com/esegere/idsort/workflows/CMake/badge.svg)](https://github.com/esegere/idsort/actions)
+
 	a utility to sort and join info from different files
 	inspired by IBM DFSORT utility
 
