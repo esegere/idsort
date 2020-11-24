@@ -71,7 +71,7 @@ namespace field{
     }
     int start_n;
     int end_n;
-    unsigned int type_n = ( (field_type == "S") ? 1 : 0 ); //0:float 1:string
+    unsigned int type_n = ( (field_type == "S") ? 1 : 0 ); //0:long double 1:string
     bool ascending_order =  (order == "A") ;
     std::istringstream(start) >> start_n;
     std::istringstream(end) >> end_n;
@@ -99,11 +99,17 @@ namespace field{
 
 
   template <int NUM_OF_TYPES>
-  bool compare(FieldType variant1, FieldType variant2){
+  int compare(FieldType variant1, FieldType variant2){
     constexpr int VARIANT_INDEX = NUM_OF_TYPES - 1 ;
-    bool result = false ;
+    int result;
     if (variant1.index() == VARIANT_INDEX){
-      result = std::get<VARIANT_INDEX>(variant1) <  std::get<VARIANT_INDEX>(variant2) ;
+      if( std::get<VARIANT_INDEX>(variant1) <  std::get<VARIANT_INDEX>(variant2) ){
+        result = -1;
+      } else if (std::get<VARIANT_INDEX>(variant1) ==  std::get<VARIANT_INDEX>(variant2)){
+        result = 0;
+      } else {
+        result = 1;
+      }
     } else {
       if constexpr (VARIANT_INDEX > 0){
         result = compare<VARIANT_INDEX>(variant1, variant2);
@@ -114,18 +120,23 @@ namespace field{
 
 
   bool Register::operator<(const Register& reg2) const{
-    bool is_lower = false;
     int reg_size = this->size();
     for (int i=0; i<reg_size; i++){
-      bool compare_result = compare<std::variant_size_v<FieldType>>(this->at(i), reg2.at(i));
-      is_lower |= this->orderAt(i) ? compare_result : !compare_result;
+      int compare_result = compare<std::variant_size_v<FieldType>>(this->at(i), reg2.at(i));
+      compare_result *= this->orderAt(i) ? 1 : -1 ;
+      if (compare_result < 0){
+        return true;
+      } else if (compare_result > 0){
+        return false;
+      }
     }
-    return is_lower;
+    return false;
   }
 
 
   Register FieldExtractor::extract(std::string_view text_line) const{
-    Register line_register(this->current_line++);
+    Register line_register;
+    line_register.setLine(std::string(text_line));
     // positive index lambda
     auto to_positive_index = [size=text_line.size()](int original_index)->unsigned int{
       int position = original_index<0 ? size + original_index + 1 : original_index;
@@ -137,7 +148,7 @@ namespace field{
       return position;
     };
     //
-    float number;
+    long double number;
     std::string word;
     for(auto field : this->columns){
       word = text_line.substr(
@@ -145,13 +156,13 @@ namespace field{
           to_positive_index(field.getEnd())
           );
       switch(field.getTypeIndex()){
-        case 0://float
+        case 0:  //long double
           std::istringstream(word) >> number;
           line_register.addPair(
               std::make_pair(number, field.isAscending())
               );
           break;
-        case 1://string
+        case 1:  //string
           line_register.addPair(
               std::make_pair(word, field.isAscending())
               );

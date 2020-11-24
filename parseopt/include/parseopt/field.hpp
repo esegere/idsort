@@ -1,7 +1,6 @@
 #include <string>
 #include <vector>
 #include <variant>
-#include <sstream>
 #include <utility>
 #include <functional>
 
@@ -12,14 +11,14 @@
 
 namespace field {
 
-  using FieldType = std::variant<float, std::string>;
+  using FieldType = std::variant<long double, std::string>;
 
   class Field: public opterr::Parseable{
     private:
         int start;
         int end;
         bool ascending_order;
-        unsigned int type; //0:float, 1:string
+        unsigned int type; //0:long double, 1:string
         bool valid;
         int invalid_specifier_index;
         std::string_view invalid_reason;
@@ -42,10 +41,10 @@ namespace field {
   class Register{
     private:
       std::vector<std::pair<FieldType, bool>> columns;
-      unsigned int line_number;
+      std::string line;
     public:
-      Register(unsigned int number): line_number(number){}
-      int getLineNumber() const{return line_number;}
+      void setLine(std::string text){this->line = text;}
+      std::string getLine() const{return line;}
       void addPair(std::pair<FieldType, bool>);
       int size() const;
       FieldType at(int index) const;
@@ -55,7 +54,6 @@ namespace field {
   class FieldExtractor {
     private:
       std::vector<Field> columns;
-      mutable unsigned int current_line = 0;
       void addField(const Field&);
     public:
       friend std::variant<FieldExtractor, std::string> parse_fields_impl(std::string_view);
