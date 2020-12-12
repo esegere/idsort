@@ -1,55 +1,28 @@
 # idsort
 [![CMake Actions Status](https://github.com/esegere/idsort/workflows/CMake/badge.svg)](https://github.com/esegere/idsort/actions)
 
-	a utility to sort and join info from different files
-	inspired by IBM DFSORT utility
-
-## operation modes
-
--S, --sort 
-
-	sort
-
--J, --Join
+	a utility to sort info inspired by IBM DFSORT utility
 
 ## required arguments
 
-[-I#] [File]
+\[File\]
 
--O, --output-file [File]
+-O, --output-file \[File\]
 
 ## flags
 
--f, --field=field[/field]...
+-f, --field=field\[/field\]...
 
-	defauts to the whole line
+	defaults to the whole line
 
--c, --condition=condition[&&condition]...
+## field syntax
 
-	            condition[||condition]... 
-	
+field		->		start\:length\:type\:order
 
--i, --include=field[/field]...
+	start		->	the number of column where the field begins, the first column is 1, if omitted defaults to 1
 
---header=number-of-lines
+	length		->	the number of characters in the field, if omitted defaults to the end of the line
 
---footer=number-of-lines
+	type		->	N for numbers or S for strings, if omitted defaults to string
 
-## option syntax
-
-field		->		start:length:type:order			
-
-condition	->		start:lenght:type:operator:value
-
-
-	start		->	the number of column where the field begins, the first column is 1, if ommited defaults to 1
-
-	lenght		->	the number of characters in the field, if ommited defaults to the end of the line
-
-	type		->	N for numbers or S for strings, if omited defaults to string
-
-	order		->	A for ascending or D for descending, if omited defaults to ascending
-
-	operator	->	comparation operator <, >, <=, >=, =, !=, ~=(just for strings, equivalent to "contains") 
-
-	value		->	the value to compare the field with, must be a number or a quoted string
+	order		->	A for ascending or D for descending, if omitted defaults to ascending

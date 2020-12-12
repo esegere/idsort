@@ -6,7 +6,7 @@ namespace parseutil {
 
   std::vector<std::string> split(std::string_view string_to_split, char delimitter){
     std::vector<std::string> splitted_strings;
-    std::string temp_str = "";
+      std::string temp_str;
     for(auto character : string_to_split){
       if (character == delimitter){
         splitted_strings.push_back(temp_str);

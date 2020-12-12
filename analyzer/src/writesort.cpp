@@ -18,15 +18,15 @@ namespace writesort{
             return error_string;
         }
         std::stringstream ss;
-        for(auto reg : lines){
+        for (const auto& reg : lines) {
             ss << reg.getLine() << "\n";
         }
         file << ss.str();
         return 0;
     }
 
-    ret_func write_to(std::string filename){
-        return [filename](std::vector<field::Register> ordered_lines) -> std::variant<int, std::string> {
+    ret_func write_to(const std::string& filename) {
+        return [filename](const std::vector<field::Register>& ordered_lines) -> std::variant<int, std::string> {
             return write_to_impl(filename, ordered_lines);
         };
     }

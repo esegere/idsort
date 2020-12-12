@@ -14,6 +14,6 @@ namespace writesort{
         std::variant<int, std::string>(std::vector<field::Register>)
     >;
 
-    ret_func write_to(std::string);
+    ret_func write_to(const std::string&);
 }
 #endif

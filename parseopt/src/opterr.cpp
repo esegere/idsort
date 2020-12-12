@@ -27,23 +27,23 @@ namespace opterr{
   constexpr char WARNING_SYMBOL[] = "~";
 
   std::string generate_parse_error(std::string_view string_to_parse, char field_delimiter, char specifier_delimiter, int field_index, const Parseable& invalid_field){
-    std::string message = colors::BOLDCYAN;
-    std::string indication_line;
-    int specifier_index = invalid_field.failIndex();
-    int curr_specifier_index = 1;
-    int curr_field_index = 1;
-    bool in_field = false;
-    bool in_specifier = false;
-    bool passed_error = false;
-    for(auto character : string_to_parse){
-      message += character;
-      if(character == field_delimiter){
-        curr_field_index ++;
-        curr_specifier_index = 1;
-      } else if (character == specifier_delimiter){
-        curr_specifier_index ++;
-      }
-      in_field = (curr_field_index == field_index);
+      std::string message = colors::BOLDCYAN;
+      std::string indication_line;
+      int specifier_index = invalid_field.failIndex();
+      int curr_specifier_index = 1;
+      int curr_field_index = 1;
+      bool in_field;
+      bool in_specifier;
+      bool passed_error = false;
+      for (auto character : string_to_parse) {
+          message += character;
+          if (character == field_delimiter) {
+              curr_field_index++;
+              curr_specifier_index = 1;
+          } else if (character == specifier_delimiter) {
+              curr_specifier_index++;
+          }
+          in_field = (curr_field_index == field_index);
       in_specifier = (curr_specifier_index == specifier_index);
       passed_error = (in_field && in_specifier) || passed_error;
       if(in_specifier && in_field){
@@ -59,9 +59,9 @@ namespace opterr{
         indication_line += passed_error ? "" : LEADING_SYMBOL;
       }
     }
-    indication_line += colors::BOLDRED + std::string(" ") + std::string(invalid_field.getNonValidReason());   
-    message += "\n ";
-    message.append(std::move(indication_line));
+    indication_line += colors::BOLDRED + std::string(" ") + std::string(invalid_field.getNonValidReason());
+      message += "\n ";
+      message.append(indication_line);
     return message;
   }
 }

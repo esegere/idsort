@@ -37,7 +37,7 @@ namespace field{
       return Field(5, "too many arguments"); 
     }
     while(specifiers.size() < 4){
-      specifiers.push_back("");
+      specifiers.emplace_back("");
     }
     std::string start = specifiers[0];
     std::string end = specifiers[1];
@@ -60,28 +60,28 @@ namespace field{
     if(!parseutil::is_valid_number(start)){
       return Field(1, "invalid start position");
     }
-    if(!parseutil::is_valid_number(end)){
-      return Field(2, "invalid length");
-    }
-    if( field_type != "N" && field_type != "S" ){
-      return Field(3, "invalid field type");
-    }
-    if( order != "A" && order != "D"){
-      return Field(4, "invalid sort order");
-    }
-    int start_n;
-    int end_n;
-    unsigned int type_n = ( (field_type == "S") ? 1 : 0 ); //0:long double 1:string
-    bool ascending_order =  (order == "A") ;
-    std::istringstream(start) >> start_n;
-    std::istringstream(end) >> end_n;
-    return Field(start_n, end_n, ascending_order, type_n);
+      if (!parseutil::is_valid_number(end)) {
+          return Field(2, "invalid length");
+      }
+      if (field_type != "N" && field_type != "S") {
+          return Field(3, "invalid field type");
+      }
+      if (order != "A" && order != "D") {
+          return Field(4, "invalid sort order");
+      }
+      int start_n = 0;
+      int end_n = 0;
+      unsigned int type_n = ((field_type == "S") ? 1 : 0); //0:long double 1:string
+      bool ascending_order = (order == "A");
+      std::istringstream(start) >> start_n;
+      std::istringstream(end) >> end_n;
+      return Field(start_n, end_n, ascending_order, type_n);
   }
 
-  
-  void Register::addPair(std::pair<FieldType, bool> new_pair){
-    this->columns.push_back(new_pair);
-  }
+
+    void Register::addPair(const std::pair<FieldType, bool>& new_pair) {
+        this->columns.push_back(new_pair);
+    }
 
 
   int Register::size() const{
@@ -100,8 +100,8 @@ namespace field{
 
   template <int NUM_OF_TYPES>
   int compare(FieldType variant1, FieldType variant2){
-    constexpr int VARIANT_INDEX = NUM_OF_TYPES - 1 ;
-    int result;
+      constexpr int VARIANT_INDEX = NUM_OF_TYPES - 1;
+      int result = 0;
     if (variant1.index() == VARIANT_INDEX){
       if( std::get<VARIANT_INDEX>(variant1) <  std::get<VARIANT_INDEX>(variant2) ){
         result = -1;
@@ -148,19 +148,19 @@ namespace field{
       return position;
     };
     //
-    long double number;
-    std::string word;
-    for(auto field : this->columns){
-      word = text_line.substr(
-          to_positive_index(field.getStart()),
-          to_positive_index(field.getEnd())
+      long double number = 0;
+      std::string word;
+      for (const auto& field : this->columns) {
+          word = text_line.substr(
+                  to_positive_index(field.getStart()),
+                  to_positive_index(field.getEnd())
           );
-      switch(field.getTypeIndex()){
-        case 0:  //long double
-          std::istringstream(word) >> number;
-          line_register.addPair(
-              std::make_pair(number, field.isAscending())
-              );
+          switch (field.getTypeIndex()) {
+              case 0:  //long double
+                  std::istringstream(word) >> number;
+                  line_register.addPair(
+                          std::make_pair(number, field.isAscending())
+                  );
           break;
         case 1:  //string
           line_register.addPair(

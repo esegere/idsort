@@ -278,7 +278,7 @@ namespace argh
    {
       // inefficient but simple way to determine if a string is a number (which can start with a '-')
       std::istringstream istr(arg);
-      double number;
+       double number = 0;
       istr >> number;
       return !(istr.fail() || istr.bad());
    }

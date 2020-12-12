@@ -27,9 +27,10 @@ namespace sortinfo{
   }
 
   ret_func proces(const std::string& filename){
-    return [filename](field::FieldExtractor extractor) -> std::variant<std::vector<field::Register>, std::string> {
-      return proces_impl(filename, extractor);
-      };
+    return [filename](
+            const field::FieldExtractor& extractor) -> std::variant<std::vector<field::Register>, std::string> {
+        return proces_impl(filename, extractor);
+    };
   }
 
 }

@@ -15,13 +15,15 @@ namespace flow{
             unsigned int error_code=0;
             T succesful_result{};
         public:
-            FlowChainer(){
+            FlowChainer() {
                 this->error_code = 1;
             }
-            FlowChainer(T&& function_result){
+
+            explicit FlowChainer(T&& function_result) {
                 this->succesful_result = std::forward<T>(function_result);
             }
-            operator int() const {return error_code;}
+
+            operator int() const { return error_code; }
             template<typename U>
             FlowChainer<U> then(std::function<std::variant<U, std::string>(T)> function_to_chain){
                 if(this->error_code != 0){

@@ -1,4 +1,5 @@
 #include <string>
+#include <utility>
 #include <vector>
 #include <variant>
 #include <utility>
@@ -43,10 +44,13 @@ namespace field {
       std::vector<std::pair<FieldType, bool>> columns;
       std::string line;
     public:
-      void setLine(std::string text){this->line = text;}
-      std::string getLine() const{return line;}
-      void addPair(std::pair<FieldType, bool>);
-      int size() const;
+          void setLine(std::string text) { this->line = std::move(text); }
+
+          std::string getLine() const { return line; }
+
+          void addPair(const std::pair<FieldType, bool>&);
+
+          int size() const;
       FieldType at(int index) const;
       bool orderAt(int index) const;
       bool operator<(const Register&) const;
