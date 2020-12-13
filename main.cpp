@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "argh/argh.hpp"
 #include "sortm.hpp"
 
