@@ -9,28 +9,33 @@ add_subdirectory(parseopt)
 add_subdirectory(analyzer)
 
 add_executable(
-	idsort
-	main.cpp
+        idsort
+        main.cpp
 )
 
 add_library(
-	modes
-	sortm.cpp
+        modes
+        sortm.cpp
 )
 
 target_link_libraries(
-	modes
-	parseopt
-	analyzer
+        modes
+        parseopt
+        analyzer
 )
 
 target_include_directories(
-	modes
-	PRIVATE
-	flow
+        modes
+        PRIVATE
+        flow
 )
 
 target_link_libraries(
-	idsort
-	modes
+        idsort
+        modes
+)
+
+install(
+        TARGETS idsort
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
 )
