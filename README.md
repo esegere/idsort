@@ -26,3 +26,24 @@ field		->		start\:length\:type\:order
 	type		->	N for numbers or S for strings, if omitted defaults to string
 
 	order		->	A for ascending or D for descending, if omitted defaults to ascending
+
+## installation
+
+### prerequisites
+
+- a c++17 capable compiler
+- make
+- cmake
+
+### process
+
+clone this repository, make a build directory inside the project repository, then run the cmake and make install commands
+
+```shell script
+git clone https://github.com/esegere/idsort
+cd idsort
+mkdir build
+cd build
+cmake ..
+sudo make install
+```
