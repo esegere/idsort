@@ -14,17 +14,10 @@ namespace field{
     this->end = end;
     this->ascending_order = ascending_order;
     this->type = type;
-    this->valid = true;
-    this->invalid_reason = "";
-    this->invalid_specifier_index = 0;
   }
 
 
   Field::Field(int invalid_specifier_index, std::string_view reason){
-    this->start = 0;
-    this->end = 0;
-    this->ascending_order = true;
-    this->type = 1; //string
     this->valid = false;
     this->invalid_reason = reason;
     this->invalid_specifier_index = invalid_specifier_index;

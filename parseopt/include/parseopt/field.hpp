@@ -14,25 +14,32 @@ namespace field {
 
   using FieldType = std::variant<long double, std::string>;
 
-  class Field: public opterr::Parseable{
-    private:
-        int start;
-        int end;
-        bool ascending_order;
-        unsigned int type; //0:long double, 1:string
-        bool valid;
-        int invalid_specifier_index;
-        std::string_view invalid_reason;
-
-        Field(unsigned int, unsigned int, bool, unsigned int);
-        Field(int, std::string_view);
+  class Field : public opterr::Parseable {
+      private:
+          int start = 0;
+          int end = 0;
+          bool ascending_order = true;
+          unsigned int type = 1; //0:long double, 1:string
+          bool valid = true;
+          int invalid_specifier_index = 0;
+          std::string_view invalid_reason = "";
+        
+          Field(unsigned int, unsigned int, bool, unsigned int);
+        
+          Field(int, std::string_view);
+    
       public:
-        bool isValid() const override {return this->valid;}
-        std::string_view getNonValidReason() const override {return this->invalid_reason;}
-        int failIndex() const override {return this->invalid_specifier_index;}
-        int getStart() const {return this->start;}
-        int getEnd() const {return this->end;}
-        bool isAscending() const {return this->ascending_order;}
+          bool isValid() const override { return this->valid; }
+        
+          std::string_view getNonValidReason() const override { return this->invalid_reason; }
+        
+          int failIndex() const override { return this->invalid_specifier_index; }
+        
+          int getStart() const { return this->start; }
+        
+          int getEnd() const { return this->end; }
+        
+          bool isAscending() const { return this->ascending_order; }
         unsigned int getTypeIndex() const {return this->type;}
         friend Field make_field(std::string_view);
   };
