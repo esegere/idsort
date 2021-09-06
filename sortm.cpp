@@ -24,8 +24,9 @@ namespace sortm{
     ).then(
       writesort::write_to(
         cli(
-          {"-O", "--output-file"}
-          ).str()
+            {"-O", "--output-file"},
+            ""
+        ).str()
       )
     );
   }
